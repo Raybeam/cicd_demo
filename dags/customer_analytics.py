@@ -46,4 +46,3 @@ with dag:
     start_dag >> [jobs["create_calendar"], jobs["create_order_detail"]] >> jobs[
         "create_customer"
     ] >> end_dag
-
