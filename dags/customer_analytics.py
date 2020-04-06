@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.operators.latest_only_operator import LatestOnlyOperator
-from airflow.providers.snowflake.operators.snowflake import SnowflakeOperator
+from airflow.contrib.operators.snowflake_operator import SnowflakeOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.models import Variable
 import settings
@@ -13,7 +13,6 @@ from datetime import datetime
 home = os.environ["AIRFLOW_HOME"]
 sql_path = os.path.join(home, "dags/customer_analytics")
 
-
 dag = DAG(
     "customer_analytics",
     schedule_interval=None,
@@ -23,8 +22,8 @@ dag = DAG(
 
 
 with dag:
-    start = LatestOnlyOperator(task_id="start", dag=dag)
-    end = DummyOperator(task_id="end", dag=dag)
+    start_dag = LatestOnlyOperator(task_id="start", dag=dag)
+    end_dag = DummyOperator(task_id="end", dag=dag)
 
     jobs = {}
     # Set up the operators
@@ -42,3 +41,9 @@ with dag:
             sql=sql_stmts,
             dag=dag,
         )
+
+    jobs["create_order_detail"] >> jobs["create_meta_order_detail"]
+    start_dag >> [jobs["create_calendar"], jobs["create_order_detail"]] >> jobs[
+        "create_customer"
+    ] >> end_dag
+
