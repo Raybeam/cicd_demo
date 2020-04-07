@@ -1,4 +1,4 @@
-create table {{ var.value.database }}.public.meta_order_detail as
+create or replace table {{ var.value.database }}.public.meta_order_detail as
 with
     date_range
     as

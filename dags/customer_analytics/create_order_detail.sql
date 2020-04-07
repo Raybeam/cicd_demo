@@ -1,4 +1,4 @@
-create table {{ var.value.database }}.public.order_detail as
+create or replace table {{ var.value.database }}.public.order_detail as
 select
    o.o_orderkey as order_key,
    o.o_custkey as customer_key,

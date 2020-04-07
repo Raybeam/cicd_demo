@@ -1,4 +1,4 @@
-create table {{ var.value.database }}.public.customer as
+create or replace table {{ var.value.database }}.public.customer as
 with
     today
     as
