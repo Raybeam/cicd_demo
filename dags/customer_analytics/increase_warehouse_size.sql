@@ -1,0 +1,1 @@
+alter warehouse {{ var.value.warehouse }} set warehouse_size=medium;

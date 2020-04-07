@@ -41,8 +41,12 @@ with dag:
             sql=sql_stmts,
             dag=dag,
         )
-
-    jobs["create_order_detail"] >> jobs["create_meta_order_detail"]
-    start_dag >> [jobs["create_calendar"], jobs["create_order_detail"]] >> jobs[
-        "create_customer"
-    ] >> end_dag
+    jobs["increase_warehouse_size"] >> start_dag >> [
+        jobs["create_calendar"],
+        jobs["create_order_detail"],
+    ] >> DummyOperator(task_id="connector", dag=dag) >> [
+        jobs["create_customer"],
+        jobs["create_meta_order_detail"],
+    ] >> end_dag >> jobs[
+        "reduce_warehouse_size_and_shutdown"
+    ]
